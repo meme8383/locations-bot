@@ -21,12 +21,13 @@ functions to create each table in the relational database. The functions to be r
 ### config.py
 This file contains all the private info needed to run the bot. To run the bot, you must create a config.py file and
 include the following information:
-`client_id = ""
+```
+client_id = ""
 token = ""
 postgres = ""
 postgres_user = ""
 postgres_pass = ""
-`
+```
 
 ### bot.py
 This file contains the actual discord bot and launcher. This file initializes the bot and connects to discord, as well
