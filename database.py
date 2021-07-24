@@ -4,6 +4,27 @@ import psycopg2
 database.py: Access and edit database
 """
 
+STATEMENT = """
+            SELECT discord_id, users.name as user, builders.user as userid, areas, city, county, state FROM (
+                SELECT user_id as user, Null as areas, Null as city, counties.name as county,
+                counties.state as state FROM county_builders
+                JOIN counties ON county_builders.county_id = counties.id
+                UNION
+                SELECT user_id as user, Null as areas, cities.name as city, counties.name as county,
+                counties.state as state FROM city_builders
+                LEFT JOIN cities ON city_builders.city_id = cities.id
+                JOIN counties ON cities.county_id = counties.id
+                UNION
+                SELECT user_id as user, locations.name as areas, cities.name as city,
+                counties.name as county, counties.state as state FROM location_builders
+                LEFT JOIN locations ON location_builders.location_id = locations.id
+                LEFT JOIN cities ON locations.city_id = cities.id
+                LEFT JOIN counties ON
+                CAST(CONCAT(locations.county_id, cities.county_id) AS INT) = counties.id)
+            AS builders
+            JOIN users on builders.user = users.id
+            """
+
 
 class BotDB:
     def __init__(self, db, user, passwd):
@@ -178,6 +199,26 @@ class BotDB:
                          ["%%%s%%" % query])
 
         return self.cur.fetchall()
+
+    def get_user(self, user):
+        """
+        Get all info on a user
+        :param user: discord user id
+        :return: database entry
+        """
+        self.cur.execute(STATEMENT + "WHERE discord_id = %s;", [user])
+
+        return self.cur.fetchall()
+
+    def add_user_id(self, username, discord_id):
+        """
+        Add a discord id to a user in the database
+        :param discord_id: user's discord id
+        :param username: username of user to add
+        :return: Nones
+        """
+        self.cur.execute("UPDATE users SET discord_id = %s WHERE name = %s", [discord_id, username])
+        self.conn.commit()
 
 
 # class BotDB:

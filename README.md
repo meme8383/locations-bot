@@ -1,6 +1,6 @@
 # Locations bot
 #### Video Demo: <url>
-### Description:
+#### Description:
 A Discord bot for searching for users in a database of builders for the BTE Project
 https://buildtheearth.net/bte-southwest
 

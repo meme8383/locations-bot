@@ -113,10 +113,10 @@ def add_builders(filename):
         for row in reader:
             if row["Areas"]:
                 for user in row["Members"].split(", "):
-                    location_builders.append((user, row["Areas"]))
+                    location_builders.append((user, row["Areas"], row["City"], row["County"]))
             elif row["City"]:
                 for user in row["Members"].split(", "):
-                    city_builders.append((user, row["City"]))
+                    city_builders.append((user, row["City"], row["County"]))
             else:
                 for user in row["Members"].split(", "):
                     county_builders.append((user, row["County"]))
@@ -124,7 +124,18 @@ def add_builders(filename):
     for builder in location_builders:
         cur.execute("SELECT id FROM users WHERE name = %s", [builder[0]])
         user = cur.fetchone()[0]
-        cur.execute("SELECT id FROM locations WHERE name = %s", [builder[1]])
+        if builder[2]:
+            cur.execute("""SELECT locations.id FROM locations
+                        LEFT JOIN cities ON cities.id = locations.city_id
+                        JOIN counties ON counties.id = CAST(CONCAT(locations.county_id, cities.county_id) AS INT)
+                        WHERE locations.name = %s AND cities.name = %s""",
+                        [builder[1], builder[2]])
+        else:
+            cur.execute("""SELECT locations.id FROM locations
+                        LEFT JOIN cities ON cities.id = locations.city_id
+                        JOIN counties ON counties.id = CAST(CONCAT(locations.county_id, cities.county_id) AS INT)
+                        WHERE locations.name = %s AND counties.name = %s""",
+                        [builder[1], builder[3]])
         location = cur.fetchone()[0]
 
         cur.execute("INSERT INTO location_builders (user_id, location_id) VALUES (%s, %s)",
@@ -132,7 +143,9 @@ def add_builders(filename):
     for builder in city_builders:
         cur.execute("SELECT id FROM users WHERE name = %s", [builder[0]])
         user = cur.fetchone()[0]
-        cur.execute("SELECT id FROM cities WHERE name = %s", [builder[1]])
+        cur.execute("""SELECT cities.id FROM cities 
+                    JOIN counties ON cities.county_id = counties.id
+                    WHERE cities.name = %s AND counties.name = %s""", [builder[1], builder[2]])
         location = cur.fetchone()[0]
 
         cur.execute("INSERT INTO city_builders (user_id, city_id) VALUES (%s, %s)",
@@ -147,11 +160,25 @@ def add_builders(filename):
                     (user, location))
 
 
+def counties_from_wiki(filename, state):
+    with open(filename, 'r', encoding='utf8') as f:
+        reader = csv.DictReader(f)
+        for row in reader:
+            name = row["County"].split(" ")
+            try:
+                name.remove("County")
+            except ValueError:
+                pass
+            cur.execute("INSERT INTO counties (name, state) VALUES (%s, %s)",
+                        [' '.join(name), state])
+
+
 if __name__ == "__main__":
     conn = psycopg2.connect("dbname=btesw user=postgres password=password")
     cur = conn.cursor()
 
-    # add_x(filename)
+    # Call function below
+    add_builders("data/Location List.csv")
 
     conn.commit()
 
