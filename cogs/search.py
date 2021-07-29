@@ -66,11 +66,11 @@ class Search(commands.Cog):
 
         # Get users from query, make description
         if scope == "area":
-            description = f"{name}, {results[0][3]} in {results[0][4]} County, {results[0][5]}"
+            description = f"{name}, {results[0][4]} in {results[0][5]} County, {results[0][6]}"
         elif scope == "city":
-            description = f"{name} in {results[0][4]} County, {results[0][5]}"
+            description = f"{name} in {results[0][5]} County, {results[0][6]}"
         elif scope == "county":
-            description = f"{name} County, {results[0][5]}"
+            description = f"{name} County, {results[0][6]}"
         else:
             description = f"{name}"
 

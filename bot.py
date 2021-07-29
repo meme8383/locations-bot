@@ -54,8 +54,8 @@ class MembersBot(commands.Bot):
         @self.command(name="ping", pass_context=True)
         async def ping(ctx):
             # Ping command
-            print(f"Pinged by {ctx.message.author}")
-            await ctx.send("Pong!")
+            print(f"[DEBUG]: Pinged by {ctx.message.author}")
+            await ctx.send(f"Pong! Latency: {int(self.latency * 1000)} ms")
 
 
 if __name__ == '__main__':
