@@ -1,12 +1,17 @@
 import csv
 import psycopg2
+import config
 
 """
 converter.py: Convert data from CSV to SQL
 """
 
+
 def main():
-    conn = psycopg2.connect("dbname=btesw user=postgres password=password")
+    conn = psycopg2.connect(
+        f"dbname={config.postgres} user={config.postgres_user} password={config.postgres_pass}"
+    )
+
     cur = conn.cursor()
 
     # Call function below
@@ -16,6 +21,7 @@ def main():
 
     cur.close()
     conn.close()
+
 
 def add_counties(filename):
     counties = []
