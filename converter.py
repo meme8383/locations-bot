@@ -5,6 +5,17 @@ import psycopg2
 converter.py: Convert data from CSV to SQL
 """
 
+def main():
+    conn = psycopg2.connect("dbname=btesw user=postgres password=password")
+    cur = conn.cursor()
+
+    # Call function below
+    add_builders("data/Location List.csv")
+
+    conn.commit()
+
+    cur.close()
+    conn.close()
 
 def add_counties(filename):
     counties = []
@@ -174,13 +185,4 @@ def counties_from_wiki(filename, state):
 
 
 if __name__ == "__main__":
-    conn = psycopg2.connect("dbname=btesw user=postgres password=password")
-    cur = conn.cursor()
-
-    # Call function below
-    add_builders("data/Location List.csv")
-
-    conn.commit()
-
-    cur.close()
-    conn.close()
+    main()
