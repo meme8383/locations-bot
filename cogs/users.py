@@ -69,12 +69,24 @@ class Users(commands.Cog):
         """
         if ctx.message.author.guild_permissions.manage_roles:
             await ctx.send("Adding id's...")
-            count = 0
-            for user in ctx.guild.members:
-                if self.db.execute("SELECT * FROM users WHERE name = %s", [user.name + "#" + user.discriminator]):
-                    self.db.add_user_id(user.name + "#" + user.discriminator, user.id)
-                    count += 1
-            await ctx.send(f"Updated {count} entries.")
+            added, skipped, changed, okay = 0
+
+            async with ctx.typing():
+                for user in ctx.guild.members:
+                    info = self.db.execute("SELECT * FROM users WHERE name = %s", [str(user)])
+                    if info:
+                        if not info[0][0]:
+                            self.db.add_user_id(str(user), user.id)
+                            added += 1
+                        elif info[0][0] != user.id:
+                            self.db.add_user_id(str(user, user.id))
+                            changed != 1
+                        else:
+                            okay += 1
+                    else:
+                        skipped += 1
+
+            await ctx.send(f"Added ID's.\nAdded: {added}\nChanged: {changed}\nOkay: {okay}\nSkipped: {skipped}")
         else:
             await ctx.send("Insufficient permissions")
 
