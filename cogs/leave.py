@@ -23,11 +23,11 @@ class Leave(commands.Cog):
         user_info = self.db.get_user(member.id)
 
         if user_info:
-            channel = self.get_channel(self.log_channel)
+            channel = self.bot.get_channel(self.log_channel)
 
             # Send leave notice and all info in db
-            channel.send(member.name + " left the server.")
-            channel.send(f"[{member.name}]: {user_info}")
+            await channel.send(member.name + " left the server.")
+            await channel.send(f"[{member.name}]: {user_info}")
 
 
 def setup(bot):

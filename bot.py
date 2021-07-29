@@ -39,7 +39,7 @@ class MembersBot(commands.Bot):
         # Connect to postgresql database with credentials in config.py
         self.db = get_database()
 
-        # self.add_commands()
+        self.add_commands()
 
         for cog in COGS:
             self.load_extension(cog)
@@ -49,6 +49,13 @@ class MembersBot(commands.Bot):
     async def on_ready(self):
         # Print info to console
         print(f'[INFO]: Ready: {self.user} (ID: {self.user.id})')
+
+    def add_commands(self):
+        @self.command(name="ping", pass_context=True)
+        async def ping(ctx):
+            # Ping command
+            print(f"Pinged by {ctx.message.author}")
+            await ctx.send("Pong!")
 
 
 if __name__ == '__main__':
