@@ -28,12 +28,11 @@ class Users(commands.Cog):
         info = self.db.get_user(user.id)
 
         if info:
-            print(info)
             # Create embed
             embed = discord.Embed(color=discord.Color.red())
 
-            embed.set_author(
-                name=user.name + "'s locations:", icon_url=user.avatar_url)
+            embed.set_author(name=user.name + "'s locations:",
+                             icon_url=user.avatar_url)
 
             locations = [i for i in info if i[3] is not None]
             cities = [i for i in info if i[4] is not None]

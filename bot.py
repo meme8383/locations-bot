@@ -44,7 +44,7 @@ class MembersBot(commands.Bot):
         for cog in COGS:
             self.load_extension(cog)
 
-        self.log_channel = 813642660388143124
+        self.log_channel = config.log_channel_id
 
     async def on_ready(self):
         # Print info to console
