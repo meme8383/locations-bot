@@ -2,6 +2,8 @@
 
 Discord bot + database for BTESW
 
+Some inspiration taken from https://github.com/Rapptz/RoboDanny
+
 ### config.py
 To run the bot, create a file named `config.py` with the following format:
 ```
