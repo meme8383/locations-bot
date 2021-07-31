@@ -13,7 +13,8 @@ Some inspiration taken from https://github.com/Rapptz/RoboDanny
 ![Userinfo Command](https://i.gyazo.com/659e6a9d4af244eee8bf260e92e9edd7.png)
 
 ### Leave Notifications
-These only activate when the user is in the database, and they show all of the user's locations similar to the userinfo command.
+These only activate when the user is in the database, and they show all the user's locations similar to the userinfo command.
+
 ![Leave Notifications](https://i.gyazo.com/a280891037d1751cfbd9dc6e892c22af.png)
 
 ## Files
