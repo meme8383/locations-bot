@@ -11,7 +11,7 @@ bot.py: Discord bot to search for discord users in database
 """
 
 __author__ = "Eduard Tanase"
-__version__ = "0.0.1"
+__version__ = "1.0.0"
 
 
 PREFIX = '~'
