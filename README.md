@@ -10,4 +10,5 @@ token = ""
 postgres = ""
 postgres_user = ""
 postgres_pass = ""
+log_channel_id = 
 ```
