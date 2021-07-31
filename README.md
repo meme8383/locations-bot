@@ -12,3 +12,6 @@ postgres_user = ""
 postgres_pass = ""
 log_channel_id = 
 ```
+
+### SQL
+The `btesw_schema` file is a schema-only backup of the psql database. Restore this file and use `converter.py` to insert the data.
