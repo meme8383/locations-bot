@@ -28,7 +28,7 @@ class Leave(commands.Cog):
             channel = self.bot.get_channel(self.log_channel)
 
             # Send leave notice and all info in db
-            embed = discord.Embed(title=f"{member} has left the server", color=discord.Color.red())
+            embed = discord.Embed(title=f"{member} has left the server", color=0xffc324)
             embed.set_thumbnail(url=member.avatar_url)
 
             locations = [i for i in info if i[3] is not None]

@@ -1,8 +1,10 @@
 import os
 import sys
+import requests
 
 import discord
 from discord.ext import commands
+from bs4 import BeautifulSoup
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from database import get_database
@@ -48,21 +50,33 @@ class Search(commands.Cog):
                 name = self.db.get_query("SELECT abbr FROM states WHERE lower(name) LIKE %s",
                                          ["%%%s%%" % query.lower()])
         else:
+            # name = self.db.search_name(table[scope], query)
+            name = query.capitalize()
+
+        results = self.db.get_builders(scope, name)
+
+        # No exact match
+        if not results:
             name = self.db.search_name(table[scope], query)
+            # Multiple areas matching search
+            if len(name) > 1:
+                await ctx.send("Found multiple matches: " + ", ".join([i[0] for i in name]))
+                return
 
-        # Multiple areas matching search
-        if len(name) > 1:
-            await ctx.send("Found multiple matches: " + ", ".join(name))
+            # No areas matching search
+            elif len(name) == 0:
+                await ctx.send(f"No results found for `{query}`")
+                return
+
+            # Try again with corrected name
+            else:
+                name = name[0][0]
+                results = self.db.get_builders(scope, name)
+
+        # No results with corrected name
+        if not results:
+            await ctx.send(f"No builders found in `{name}`")
             return
-        else:
-            name = name[0][0]
-
-        # No areas matching search
-        if len(name) == 0:
-            await ctx.send("No results found")
-            return
-
-        results = self.db.get_builders(scope, query)
 
         # Get users from query, make description
         if scope == "area":
@@ -77,21 +91,34 @@ class Search(commands.Cog):
         # Append users to list without duplicates
         users = []
         for item in results:
-            if item[0] not in users:
-                users.append(item[0])
+            if item[0]:
+                ping = f"<@{item[0]}>"
+                if ping not in users:
+                    users.append(ping)
+            elif item[1] not in users:
+                users.append(item[1])
 
         # Verify allowed length
-        if 0 < len(users) < 100:
+        if 0 < len(users) < 80:
             # Create and send embed
             embed = discord.Embed(
-                title="Search Results", description=description, color=0xff0000)
+                title="Search Results", description=description, color=0xb71234)
             # Vertical list of user names
             embed.add_field(name=f"Found {len(users)}:", value="\n".join(users))
+
+            # Add image
+            image = self.get_google_img(name)
+            if image:
+                embed.set_thumbnail(url=image)
+
             await ctx.send(embed=embed)
         elif len(users) >= 100:
             await ctx.send(f"User list too long: {len(users)} users found")
         else:
             await ctx.send(f"No users found")
+
+    def get_google_img(self, query):
+        pass
 
 
 def setup(bot):

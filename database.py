@@ -54,7 +54,7 @@ class BotDB:
         :return: None
         """
         self.cur.execute(query, args)
-        print("[DEBUG]: " + query + ", " + str(args))
+        # print("[DEBUG]: " + query + ", " + str(args))
         self.conn.commit()
 
     def get_query(self, query, args=None):
@@ -65,7 +65,7 @@ class BotDB:
         :return: SQL results
         """
         self.cur.execute(query, args)
-        print("[DEBUG]: " + query + ", " + str(args))
+        # print("[DEBUG]: " + query + ", " + str(args))
         return self.cur.fetchall()
 
     def get_all(self):
@@ -79,7 +79,7 @@ class BotDB:
         """
         Get all builders in a certain area
         """
-        self.cur.execute(STATEMENT + "WHERE %s = %s", [scope, query])
+        self.cur.execute(STATEMENT + f" WHERE {scope} = %s", [query])
         return self.cur.fetchall()
 
     def search_name(self, table, query):
@@ -99,7 +99,7 @@ class BotDB:
         :param user: discord user id
         :return: database entry
         """
-        self.cur.execute(STATEMENT + "WHERE discord_id = %s;", [user])
+        self.cur.execute(STATEMENT + " WHERE discord_id = %s;", [user])
         return self.cur.fetchall()
 
     def add_user_id(self, username, discord_id):

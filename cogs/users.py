@@ -29,7 +29,7 @@ class Users(commands.Cog):
 
         if info:
             # Create embed
-            embed = discord.Embed(color=discord.Color.red())
+            embed = discord.Embed(color=0xffc324)
 
             embed.set_author(name=user.name + "'s locations:",
                              icon_url=user.avatar_url)
@@ -68,18 +68,22 @@ class Users(commands.Cog):
         """
         if ctx.message.author.guild_permissions.manage_roles:
             await ctx.send("Adding id's...")
-            added, skipped, changed, okay = 0
+            added = 0
+            skipped = 0
+            changed = 0
+            okay = 0
 
             async with ctx.typing():
                 for user in ctx.guild.members:
-                    info = self.db.execute("SELECT * FROM users WHERE name = %s", [str(user)])
+                    info = self.db.get_query("SELECT * FROM users WHERE name = %s", [str(user)])
                     if info:
-                        if not info[0][0]:
+                        print(info)
+                        if not info[0][2]:
                             self.db.add_user_id(str(user), user.id)
                             added += 1
-                        elif info[0][0] != user.id:
-                            self.db.add_user_id(str(user, user.id))
-                            changed != 1
+                        elif info[0][2] != user.id:
+                            self.db.add_user_id(str(user), user.id)
+                            changed += 1
                         else:
                             okay += 1
                     else:
