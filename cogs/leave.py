@@ -24,7 +24,7 @@ class Leave(commands.Cog):
         # Check if user in db
         info = self.db.get_user(member.id)
 
-        if True:
+        if info:
             channel = self.bot.get_channel(self.log_channel)
 
             # Send leave notice and all info in db

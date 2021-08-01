@@ -8,6 +8,7 @@ from database import get_database
 
 """
 bot.py: Discord bot to search for discord users in database
+Some inspiration taken from RoboDanny: https://github.com/Rapptz/RoboDanny
 """
 
 __author__ = "Eduard Tanase"

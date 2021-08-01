@@ -34,26 +34,34 @@ class Users(commands.Cog):
             embed.set_author(name=user.name + "'s locations:",
                              icon_url=user.avatar_url)
 
-            locations = [i for i in info if i[3] is not None]
-            cities = [i for i in info if i[4] is not None]
-            counties = [i for i in info if i[5] is not None]
+            # Sort info for location, then city
+            info = [i[3:] for i in info]
+            info = sorted(info, key=lambda i: i[1] is not None)
+            info = sorted(info, key=lambda i: i[0] is not None)
+
+            # List for each column
+            locations = [i for i in info if i[0] is not None]
+            cities = [i for i in info if not (i[0] is None and i[1] is None)]
+            counties = [i for i in info if i[2] is not None]
+
+            print
 
             if locations:
                 embed.add_field(
                     name="Location",
-                    value='\n'.join([i[3] for i in locations]),
+                    value='\n'.join([i[0] for i in locations]),
                     inline=True
                 )
             if cities:
                 embed.add_field(
                     name="City",
-                    value='\n'.join([i[4] for i in cities]),
+                    value='\n'.join([str(i[1]) for i in cities]),
                     inline=True
                 )
             if counties:
                 embed.add_field(
                     name="County/State",
-                    value='\n'.join([i[5] + " County, " + i[6] for i in counties]),
+                    value='\n'.join([i[2] + " County, " + i[3] for i in counties]),
                     inline=True
                 )
 
@@ -77,7 +85,6 @@ class Users(commands.Cog):
                 for user in ctx.guild.members:
                     info = self.db.get_query("SELECT * FROM users WHERE name = %s", [str(user)])
                     if info:
-                        print(info)
                         if not info[0][2]:
                             self.db.add_user_id(str(user), user.id)
                             added += 1
@@ -89,7 +96,9 @@ class Users(commands.Cog):
                     else:
                         skipped += 1
 
-            await ctx.send(f"Added ID's.\nAdded: {added}\nChanged: {changed}\nOkay: {okay}\nSkipped: {skipped}")
+            message = f"Added ID's.\nAdded: {added}\nChanged: {changed}\nOkay: {okay}\nSkipped: {skipped}"
+            await ctx.send(message)
+            print(message)
         else:
             await ctx.send("Insufficient permissions")
 
