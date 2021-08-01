@@ -91,12 +91,13 @@ class Search(commands.Cog):
         # Append users to list without duplicates
         users = []
         for item in results:
-            if item[0]:
-                ping = f"<@{item[0]}>"
-                if ping not in users:
-                    users.append(ping)
-            elif item[1] not in users:
-                users.append(item[1])
+            # MENTION FUNCTIONALITY - doesn't work as discord only shows cached users as mentions
+            # if item[0]:
+            #     ping = f"<@{item[0]}>"
+            #     if ping not in users:
+            #         users.append(ping)
+            # elif item[1] not in users:
+            users.append(item[1])
 
         # Verify allowed length
         if 0 < len(users) < 80:

@@ -54,7 +54,11 @@ class MembersBot(commands.Bot):
     def add_commands(self):
         @self.command(name="ping", pass_context=True)
         async def ping(ctx):
-            # Ping command
+            """
+            Pings the bot. Also shows latency
+            :param ctx: Command invoke context
+            :return: None
+            """
             print(f"[DEBUG]: Pinged by {ctx.message.author}")
             await ctx.send(f"Pong! Latency: {int(self.latency * 1000)} ms")
 
