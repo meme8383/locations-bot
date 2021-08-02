@@ -93,14 +93,16 @@ class Search(commands.Cog):
 
         # Append users to list without duplicates
         users = []
+        no_id = False
         for item in results:
-            # MENTION FUNCTIONALITY - doesn't work as discord only shows cached users as mentions
-            # if item[0]:
-            #     ping = f"<@{item[0]}>"
-            #     if ping not in users:
-            #         users.append(ping)
-            if item[1] not in users:
-                users.append(item[1])
+            # Get user name, add * if no ID found
+            if item[0]:
+                user = item[1]
+            else:
+                user = item[1] + '*'
+                no_id = True
+            if user not in users:
+                users.append(user)
 
         # Verify allowed length
         if 0 < len(users) < 80:
@@ -109,6 +111,10 @@ class Search(commands.Cog):
                 title="Search Results", description=description, color=0xb71234)
             # Vertical list of user names
             embed.add_field(name=f"Found {len(users)}:", value="\n".join(users))
+
+            # Add * note
+            if no_id:
+                embed.set_footer(text="*No ID found for user")
 
             # Add image
             image = self.get_google_img(name)
