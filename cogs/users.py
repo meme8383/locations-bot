@@ -69,7 +69,7 @@ class Users(commands.Cog):
         else:
             await ctx.send("No user found: " + user.name)
 
-    @commands.command(name="add_ids", pass_context=True)
+    @commands.command(name="add-ids", pass_context=True)
     async def add_ids(self, ctx):
         """
         Adds discord id's of all users to database
@@ -101,6 +101,19 @@ class Users(commands.Cog):
             print(message)
         else:
             await ctx.send("Insufficient permissions")
+
+    @commands.command(name="unknown-users", pass_context=True)
+    async def unknown_users(self, ctx):
+        """
+        Lists all users with no ID in the database
+        :param ctx: Command invoke context
+        :return: None
+        """
+        users = self.db.get_query("SELECT name FROM users WHERE discord_id IS NULL", [])
+        if users:
+            embed = discord.Embed(title="Unknown users", color=0xb71234)
+            embed.add_field(name=f"{len(users)} found:", value="\n".join([i[0] for i in users[:20]]))
+            await ctx.send(embed=embed)
 
 
 def setup(bot):
