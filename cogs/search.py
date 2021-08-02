@@ -43,12 +43,16 @@ class Search(commands.Cog):
 
         # Search for query in table
         if scope == "state":
-            if len(query) == 2:
-                # Search state abbreviation
-                name, fname = self.db.get_query("SELECT abbr, name FROM states WHERE abbr = %s", [query.upper()])[0]
-            else:
-                name, fname = self.db.get_query("SELECT abbr, name FROM states WHERE lower(name) LIKE %s",
-                                                ["%%%s%%" % query.lower()])[0][0]
+            try:
+                if len(query) == 2:
+                    # Search state abbreviation
+                    name, fname = self.db.get_query("SELECT abbr, name FROM states WHERE abbr = %s", [query.upper()])[0]
+                else:
+                    name, fname = self.db.get_query("SELECT abbr, name FROM states WHERE lower(name) LIKE %s",
+                                                    ["%%%s%%" % query.lower()])[0][0]
+            except IndexError:
+                await ctx.send(f"The state `{query}` does not exist. Please try again.")
+                return
         else:
             name = query.capitalize()
 
