@@ -19,9 +19,9 @@ class Search(commands.Cog):
     async def search(self, ctx, *args):
         """
         Searches database for users based on area
-        :param ctx: message context
-        :param args: search scope, search keywords
-        :return: exit code
+        :param ctx: Command invoke context
+        :param args: Search scope + Search keywords
+        :return: None
         """
         # Check for arguments
         if len(args) < 2:
@@ -45,10 +45,10 @@ class Search(commands.Cog):
         if scope == "state":
             if len(query) == 2:
                 # Search state abbreviation
-                name = self.db.get_query("SELECT abbr FROM states WHERE abbr = %s", [query.upper()])
+                name = self.db.get_query("SELECT abbr FROM states WHERE abbr = %s", [query.upper()])[0][0]
             else:
                 name = self.db.get_query("SELECT abbr FROM states WHERE lower(name) LIKE %s",
-                                         ["%%%s%%" % query.lower()])
+                                         ["%%%s%%" % query.lower()])[0][0]
         else:
             # name = self.db.search_name(table[scope], query)
             name = query.capitalize()

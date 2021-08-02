@@ -19,6 +19,8 @@ class Leave(commands.Cog):
     async def on_member_remove(self, member):
         """
         Send a notification when a member in the db leaves
+        :param member: User who left
+        :returns: None
         """
 
         # Check if user in db

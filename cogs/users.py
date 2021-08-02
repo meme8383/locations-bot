@@ -17,6 +17,8 @@ class Users(commands.Cog):
     async def userinfo(self, ctx):
         """
         Get info from database on user
+        :param ctx: Command invoke context
+        :returns: None
         """
         # Get user
         try:
