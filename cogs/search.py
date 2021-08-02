@@ -45,12 +45,11 @@ class Search(commands.Cog):
         if scope == "state":
             if len(query) == 2:
                 # Search state abbreviation
-                name = self.db.get_query("SELECT abbr FROM states WHERE abbr = %s", [query.upper()])[0][0]
+                name, fname = self.db.get_query("SELECT abbr, name FROM states WHERE abbr = %s", [query.upper()])[0]
             else:
-                name = self.db.get_query("SELECT abbr FROM states WHERE lower(name) LIKE %s",
-                                         ["%%%s%%" % query.lower()])[0][0]
+                name, fname = self.db.get_query("SELECT abbr, name FROM states WHERE lower(name) LIKE %s",
+                                                ["%%%s%%" % query.lower()])[0][0]
         else:
-            # name = self.db.search_name(table[scope], query)
             name = query.capitalize()
 
         results = self.db.get_builders(scope, name)
@@ -86,7 +85,7 @@ class Search(commands.Cog):
         elif scope == "county":
             description = f"{name} County, {results[0][6]}"
         else:
-            description = f"{name}"
+            description = f"{fname}"
 
         # Append users to list without duplicates
         users = []
