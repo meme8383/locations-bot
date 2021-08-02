@@ -46,8 +46,6 @@ class Users(commands.Cog):
             cities = [i for i in info if not (i[0] is None and i[1] is None)]
             counties = [i for i in info if i[2] is not None]
 
-            print
-
             if locations:
                 embed.add_field(
                     name="Location",
