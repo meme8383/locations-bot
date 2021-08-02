@@ -96,8 +96,8 @@ class Search(commands.Cog):
             #     ping = f"<@{item[0]}>"
             #     if ping not in users:
             #         users.append(ping)
-            # elif item[1] not in users:
-            users.append(item[1])
+            if item[1] not in users:
+                users.append(item[1])
 
         # Verify allowed length
         if 0 < len(users) < 80:
