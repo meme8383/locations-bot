@@ -1,6 +1,7 @@
 import os
 import sys
 import DiscordUtils
+from cogs.search import Search
 
 import discord
 from discord.ext import commands
@@ -13,6 +14,7 @@ class Users(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
         self.db = get_database()
+        self.search = Search(self.bot)
 
     @commands.command(name="userinfo", pass_context=True)
     async def userinfo(self, ctx):
@@ -27,44 +29,56 @@ class Users(commands.Cog):
         except IndexError:
             user = ctx.message.author
 
-        # Get info from db
-        info = self.db.get_user(user.id)
+        locations = []
 
-        if info:
+        # Get info from db
+        # info = self.db.get_user(user.id)
+        user_id = self.db.get_query("SELECT id FROM users WHERE discord_id = %s", [user.id])[0]
+
+        for area in self.db.get_query("SELECT location_id FROM location_builders WHERE user_id = %s", [user_id]):
+            locations.append(self.search.get_description("area", area[0]))
+        for city in self.db.get_query("SELECT city_id FROM city_builders WHERE user_id = %s", [user_id]):
+            locations.append(self.search.get_description("city", city[0]))
+        for county in self.db.get_query("SELECT county_id FROM county_builders WHERE user_id = %s", [user_id]):
+            locations.append(self.search.get_description("county", county[0]))
+
+        if locations:
             # Create embed
             embed = discord.Embed(color=0xffc324)
 
             embed.set_author(name=user.name + "'s locations:",
                              icon_url=user.avatar_url)
 
-            # Sort info for location, then city
-            info = [i[3:] for i in info]
-            info = sorted(info, key=lambda i: i[1] is not None)
-            info = sorted(info, key=lambda i: i[0] is not None)
+            # # Sort info for location, then city
+            # info = [i[3:] for i in info]
+            # info = sorted(info, key=lambda i: i[1] is not None)
+            # info = sorted(info, key=lambda i: i[0] is not None)
+            #
+            # # List for each column
+            # locations = [i for i in info if i[0] is not None]
+            # cities = [i for i in info if not (i[0] is None and i[1] is None)]
+            # counties = [i for i in info if i[2] is not None]
+            #
+            # if locations:
+            #     embed.add_field(
+            #         name="Location",
+            #         value='\n'.join([i[0] for i in locations]),
+            #         inline=True
+            #     )
+            # if cities:
+            #     embed.add_field(
+            #         name="City",
+            #         value='\n'.join([str(i[1]) for i in cities]),
+            #         inline=True
+            #     )
+            # if counties:
+            #     embed.add_field(
+            #         name="County/State",
+            #         value='\n'.join([i[2] + " County, " + i[3] for i in counties]),
+            #         inline=True
+            #     )
 
-            # List for each column
-            locations = [i for i in info if i[0] is not None]
-            cities = [i for i in info if not (i[0] is None and i[1] is None)]
-            counties = [i for i in info if i[2] is not None]
-
-            if locations:
-                embed.add_field(
-                    name="Location",
-                    value='\n'.join([i[0] for i in locations]),
-                    inline=True
-                )
-            if cities:
-                embed.add_field(
-                    name="City",
-                    value='\n'.join([str(i[1]) for i in cities]),
-                    inline=True
-                )
-            if counties:
-                embed.add_field(
-                    name="County/State",
-                    value='\n'.join([i[2] + " County, " + i[3] for i in counties]),
-                    inline=True
-                )
+            embed.add_field(name=f"Found {len(locations)}:", value="\n".join(locations))
 
             await ctx.send(embed=embed)
         else:

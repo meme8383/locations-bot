@@ -82,7 +82,7 @@ class Search(commands.Cog):
                 # Create embed with results
                 embed = discord.Embed(title="Multiple matches found", color=0xffc324)
                 embed.add_field(name="React to select your choice:",
-                                value="\n".join([f"{reactions[i]} " + self._get_description(scope, search[i][0])
+                                value="\n".join([f"{reactions[i]} " + self.get_description(scope, search[i][0])
                                                  for i in range(len(search))]))
                 msg = await ctx.send(embed=embed)
 
@@ -123,7 +123,7 @@ class Search(commands.Cog):
             return
 
         # Make description
-        description = self._get_description(scope, id)
+        description = self.get_description(scope, id)
 
         # Append users to list without duplicates
         users = []
@@ -184,7 +184,7 @@ class Search(commands.Cog):
     def get_google_img(self, query):
         pass
 
-    def _get_description(self, scope, id):
+    def get_description(self, scope, id):
         """
         Get a detailed description of an area
         :param scope: Area, city, county, or state
