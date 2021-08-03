@@ -1,5 +1,6 @@
 import os
 import sys
+import DiscordUtils
 
 import discord
 from discord.ext import commands
@@ -110,10 +111,27 @@ class Users(commands.Cog):
         :return: None
         """
         users = self.db.get_query("SELECT name FROM users WHERE discord_id IS NULL", [])
-        if users:
+
+        embeds = []
+        for i in range(0, len(users), 20):
             embed = discord.Embed(title="Unknown users", color=0xb71234)
-            embed.add_field(name=f"{len(users)} found:", value="\n".join([i[0] for i in users[:20]]))
-            await ctx.send(embed=embed)
+
+            # Page numbers
+            page = int(i/20 + 1)
+            total = int(len(users)/20) + 1
+
+            # Vertical list of user names
+            try:
+                user_list = "\n".join([j[0] for j in users[i:i+20]])
+            except IndexError:
+                user_list = "\n".join([j[0] for j in users[i:]])
+
+            embed.add_field(name=f"Found {len(users)} (page {page} of {total}):", value=user_list)
+
+            embeds.append(embed)
+
+        paginator = DiscordUtils.Pagination.AutoEmbedPaginator(ctx)
+        await paginator.run(embeds)
 
 
 def setup(bot):

@@ -136,6 +136,8 @@ class Search(commands.Cog):
                 user = item[1] + '*'
                 no_id = True
             if user not in users:
+                user = user.replace('*', '\*')
+                user = user.replace('_', '\_')
                 users.append(user)
 
         # No users found
@@ -145,27 +147,39 @@ class Search(commands.Cog):
 
         # Paginate for 20 users
         embeds = []
-        for i in range(0, len(users), 20):
-            embed = discord.Embed(
-                title="Search Results", description=description, color=0xb71234)
+        per_page = 20
+
+        if len(users) > 20:
+            for i in range(0, len(users), per_page):
+                embed = discord.Embed(title="Search Results", description=description, color=0xb71234)
+                # Add * note
+                if no_id:
+                    embed.set_footer(text="*No ID found for user")
+
+                # Page numbers
+                page = int(i/per_page + 1)
+                total = int(len(users)/per_page) + 1
+
+                # Vertical list of user names
+                try:
+                    user_list = "\n".join(users[i:i + per_page])
+                except IndexError:
+                    user_list = "\n".join(users[i:])
+
+                embed.add_field(name=f"Found {len(users)} (page {page} of {total}):", value=user_list)
+                embeds.append(embed)
+
+            paginator = DiscordUtils.Pagination.AutoEmbedPaginator(ctx, remove_reactions=True)
+            await paginator.run(embeds)
+        else:
+            embed = discord.Embed(title="Search Results", description=description, color=0xb71234)
             # Add * note
             if no_id:
                 embed.set_footer(text="*No ID found for user")
 
-            # Page numbers
-            page = int(i/20 + 1)
-            total = int(len(users)/20) + 1
-
             # Vertical list of user names
-            try:
-                embed.add_field(name=f"Found {len(users)} (page {page} of {total}):", value="\n".join(users[i:i+20]))
-            except IndexError:
-                embed.add_field(name=f"Found {len(users)} (page {page} of {total}):", value="\n".join(users[i:]))
-
-            embeds.append(embed)
-
-        paginator = DiscordUtils.Pagination.AutoEmbedPaginator(ctx)
-        await paginator.run(embeds)
+            embed.add_field(name=f"Found {len(users)}:", value="\n".join(users))
+            await ctx.send(embed=embed)
 
         # # Create embed
         # embed = discord.Embed(
