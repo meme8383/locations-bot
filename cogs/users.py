@@ -31,9 +31,12 @@ class Users(commands.Cog):
 
         locations = []
 
-        # Get info from db
-        # info = self.db.get_user(user.id)
-        user_id = self.db.get_query("SELECT id FROM users WHERE discord_id = %s", [user.id])[0]
+        # Get user id, send message if not in db
+        try:
+            user_id = self.db.get_query("SELECT id FROM users WHERE discord_id = %s", [user.id])[0]
+        except IndexError:
+            ctx.send(f"`{user}` could not be found.")
+            return
 
         for area in self.db.get_query("SELECT location_id FROM location_builders WHERE user_id = %s", [user_id]):
             locations.append(self.search.get_description("area", area[0]))
@@ -49,40 +52,11 @@ class Users(commands.Cog):
             embed.set_author(name=user.name + "'s locations:",
                              icon_url=user.avatar_url)
 
-            # # Sort info for location, then city
-            # info = [i[3:] for i in info]
-            # info = sorted(info, key=lambda i: i[1] is not None)
-            # info = sorted(info, key=lambda i: i[0] is not None)
-            #
-            # # List for each column
-            # locations = [i for i in info if i[0] is not None]
-            # cities = [i for i in info if not (i[0] is None and i[1] is None)]
-            # counties = [i for i in info if i[2] is not None]
-            #
-            # if locations:
-            #     embed.add_field(
-            #         name="Location",
-            #         value='\n'.join([i[0] for i in locations]),
-            #         inline=True
-            #     )
-            # if cities:
-            #     embed.add_field(
-            #         name="City",
-            #         value='\n'.join([str(i[1]) for i in cities]),
-            #         inline=True
-            #     )
-            # if counties:
-            #     embed.add_field(
-            #         name="County/State",
-            #         value='\n'.join([i[2] + " County, " + i[3] for i in counties]),
-            #         inline=True
-            #     )
-
             embed.add_field(name=f"Found {len(locations)}:", value="\n".join(locations))
 
             await ctx.send(embed=embed)
         else:
-            await ctx.send("No user found: " + user.name)
+            await ctx.send(f"No data found for `{user}`")
 
     @commands.command(name="add-ids", pass_context=True)
     async def add_ids(self, ctx):
