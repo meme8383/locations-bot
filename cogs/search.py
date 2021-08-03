@@ -2,6 +2,7 @@ import os
 import sys
 import requests
 import asyncio
+import DiscordUtils
 
 import discord
 from discord.ext import commands
@@ -142,28 +143,52 @@ class Search(commands.Cog):
             await ctx.send(f"No users found")
             return
 
-        # Create embed
-        embed = discord.Embed(
-            title="Search Results", description=description, color=0xb71234)
-        # Vertical list of user names
-        embed.add_field(name=f"Found {len(users)}:", value="\n".join(users))
+        # Paginate for 20 users
+        embeds = []
+        for i in range(0, len(users), 20):
+            embed = discord.Embed(
+                title="Search Results", description=description, color=0xb71234)
+            # Add * note
+            if no_id:
+                embed.set_footer(text="*No ID found for user")
 
-        # Add * note
-        if no_id:
-            embed.set_footer(text="*No ID found for user")
+            # Page numbers
+            page = int(i/20 + 1)
+            total = int(len(users)/20) + 1
 
-        # Add image
-        image = self.get_google_img(name)
-        if image:
-            embed.set_thumbnail(url=image)
+            # Vertical list of user names
+            try:
+                embed.add_field(name=f"Found {len(users)} (page {page} of {total}):", value="\n".join(users[i:i+20]))
+            except IndexError:
+                embed.add_field(name=f"Found {len(users)} (page {page} of {total}):", value="\n".join(users[i:]))
 
-        try:
-            await ctx.send(embed=embed)
-        except discord.HTTPException as ex:
-            if ex.status != 400 or ex.code != 50035:
-                return
-            await ctx.send(f"User list too long: {len(users)} users found.")
-            return
+            embeds.append(embed)
+
+        paginator = DiscordUtils.Pagination.AutoEmbedPaginator(ctx)
+        await paginator.run(embeds)
+
+        # # Create embed
+        # embed = discord.Embed(
+        #     title="Search Results", description=description, color=0xb71234)
+        # # Vertical list of user names
+        # embed.add_field(name=f"Found {len(users)}:", value="\n".join(users))
+        #
+        # # Add * note
+        # if no_id:
+        #     embed.set_footer(text="*No ID found for user")
+        #
+        # # Add image
+        # image = self.get_google_img(name)
+        # if image:
+        #     embed.set_thumbnail(url=image)
+        #
+        # try:
+        #     await ctx.send(embed=embed)
+        # except discord.HTTPException as ex:
+        #     if ex.status != 400 or ex.code != 50035:
+        #         return
+        #     await ctx.send(f"User list too long: {len(users)} users found.")
+        #     return
 
     def get_google_img(self, query):
         pass
