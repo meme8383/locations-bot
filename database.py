@@ -152,7 +152,7 @@ class BotDB:
         :param id: Id of county
         :return: State of county
         """
-        self.cur.execute("SELECT state FROM counties WHERE id = %s", [id])
+        self.cur.execute("SELECT name, state FROM counties WHERE id = %s", [id])
         return self.cur.fetchone()
 
     def get_user(self, user):

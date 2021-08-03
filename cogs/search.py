@@ -135,9 +135,9 @@ class Search(commands.Cog):
             else:
                 user = item[1] + '*'
                 no_id = True
+            user = user.replace('*', '\*')
+            user = user.replace('_', '\_')
             if user not in users:
-                user = user.replace('*', '\*')
-                user = user.replace('_', '\_')
                 users.append(user)
 
         # No users found
@@ -180,29 +180,6 @@ class Search(commands.Cog):
             # Vertical list of user names
             embed.add_field(name=f"Found {len(users)}:", value="\n".join(users))
             await ctx.send(embed=embed)
-
-        # # Create embed
-        # embed = discord.Embed(
-        #     title="Search Results", description=description, color=0xb71234)
-        # # Vertical list of user names
-        # embed.add_field(name=f"Found {len(users)}:", value="\n".join(users))
-        #
-        # # Add * note
-        # if no_id:
-        #     embed.set_footer(text="*No ID found for user")
-        #
-        # # Add image
-        # image = self.get_google_img(name)
-        # if image:
-        #     embed.set_thumbnail(url=image)
-        #
-        # try:
-        #     await ctx.send(embed=embed)
-        # except discord.HTTPException as ex:
-        #     if ex.status != 400 or ex.code != 50035:
-        #         return
-        #     await ctx.send(f"User list too long: {len(users)} users found.")
-        #     return
 
     def get_google_img(self, query):
         pass
