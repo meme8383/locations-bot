@@ -30,7 +30,8 @@ class MembersBot(commands.Bot):
         intents = discord.Intents(
             guilds=True,
             members=True,
-            messages=True
+            messages=True,
+            reactions=True
         )
         super().__init__(command_prefix=PREFIX, intents=intents)
 

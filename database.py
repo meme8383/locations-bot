@@ -6,18 +6,18 @@ database.py: Access and edit database
 """
 
 STATEMENT = """
-            SELECT discord_id, users.name as user, builders.user as userid, area, city, county, state FROM (
-                SELECT user_id as user, Null as area, Null as city, counties.name as county,
-                counties.state as state FROM county_builders
+            SELECT discord_id, users.name AS user, builders.user AS userid, area, city, county, state FROM (
+                SELECT user_id AS user, Null AS area, Null AS city, counties.name AS county,
+                counties.state AS state FROM county_builders
                 JOIN counties ON county_builders.county_id = counties.id
                 UNION
-                SELECT user_id as user, Null as area, cities.name as city, counties.name as county,
-                counties.state as state FROM city_builders
+                SELECT user_id AS user, Null AS area, cities.name AS city, counties.name AS county,
+                counties.state AS state FROM city_builders
                 LEFT JOIN cities ON city_builders.city_id = cities.id
                 JOIN counties ON cities.county_id = counties.id
                 UNION
-                SELECT user_id as user, locations.name as area, cities.name as city,
-                counties.name as county, counties.state as state FROM location_builders
+                SELECT user_id AS user, locations.name AS area, cities.name AS city,
+                counties.name AS county, counties.state AS state FROM location_builders
                 LEFT JOIN locations ON location_builders.location_id = locations.id
                 LEFT JOIN cities ON locations.city_id = cities.id
                 LEFT JOIN counties ON
@@ -44,7 +44,7 @@ class BotDB:
         self.conn = psycopg2.connect(f"dbname={db} user={user} password={passwd}")
         self.cur = self.conn.cursor()
 
-        print(f"[INFO]: Database: Connected to {db} as {user} successfully")
+        print(f"[INFO]: Database: Connected to {db} AS {user} successfully")
 
     def execute(self, query, args):
         """
@@ -82,6 +82,36 @@ class BotDB:
         self.cur.execute(STATEMENT + f" WHERE {scope} = %s", [query])
         return self.cur.fetchall()
 
+    def get_builders_by_id(self, scope, id):
+        """
+        Get all builders by ID of location/city/county/state
+        :param scope: location, city, county, or state
+        :param id: id of search
+        :return: Results
+        """
+        self.cur.execute(f"""
+            SELECT discord_id, users.name AS user, builders.user AS userid, area, city, county, state FROM (
+                SELECT user_id AS user, Null AS area, Null AS city, counties.id AS county,
+                counties.state AS state FROM county_builders
+                JOIN counties ON county_builders.county_id = counties.id
+                UNION
+                SELECT user_id AS user, CAST(Null AS INT) AS area, cities.id AS city, counties.id AS county,
+                counties.state AS state FROM city_builders
+                LEFT JOIN cities ON city_builders.city_id = cities.id
+                JOIN counties ON cities.county_id = counties.id
+                UNION
+                SELECT user_id AS user, locations.id AS area, cities.id AS city,
+                counties.id AS county, counties.state AS state FROM location_builders
+                LEFT JOIN locations ON location_builders.location_id = locations.id
+                LEFT JOIN cities ON locations.city_id = cities.id
+                LEFT JOIN counties ON
+                CAST(CONCAT(locations.county_id, cities.county_id) AS INT) = counties.id)
+            AS builders
+            JOIN users on builders.user = users.id
+            WHERE {scope} = %s
+            """, [id])
+        return self.cur.fetchall()
+
     def search_name(self, table, query):
         """
         Get the true name of an area based on a query
@@ -92,6 +122,38 @@ class BotDB:
         self.cur.execute(f"SELECT name FROM {table} WHERE lower(name) LIKE lower(%s)",
                          ["%%%s%%" % query])
         return self.cur.fetchall()
+
+    def area_info(self, id):
+        """
+        Get the city, county, state of a location
+        :param id: Id of area
+        :return: City, county, state of location
+        """
+        self.cur.execute(f"""SELECT locations.name, cities.name, counties.name, counties.state FROM locations
+                         LEFT JOIN cities ON locations.city_id = cities.id
+                         LEFT JOIN counties ON CAST(CONCAT(locations.county_id, cities.county_id) AS INT) = 
+                         counties.id WHERE locations.id = %s""", [id])
+        return self.cur.fetchone()
+
+    def city_info(self, id):
+        """
+        Get the county, state of a city
+        :param id: Id of city
+        :return: County, state of city
+        """
+        self.cur.execute(f"""SELECT cities.name, counties.name, counties.state FROM cities
+                         LEFT JOIN counties ON cities.county_id = counties.id
+                         WHERE cities.id = %s""", [id])
+        return self.cur.fetchone()
+
+    def county_info(self, id):
+        """
+        Get the state of a county
+        :param id: Id of county
+        :return: State of county
+        """
+        self.cur.execute("SELECT state FROM counties WHERE id = %s", [id])
+        return self.cur.fetchone()
 
     def get_user(self, user):
         """
