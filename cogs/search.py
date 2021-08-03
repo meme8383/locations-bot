@@ -26,7 +26,7 @@ class Search(commands.Cog):
         """
         # Check for arguments
         if len(args) < 2:
-            await ctx.send("Usage: search [SCOPE] [QUERY]")
+            await ctx.send("Usage: search <area:city:county:state> <query>")
             return
 
         # Verify correct usage
