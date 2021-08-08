@@ -20,7 +20,8 @@ PREFIX = '~'
 COGS = [
     "cogs.leave",
     "cogs.search",
-    "cogs.users"
+    "cogs.users",
+    "cogs.update"
 ]
 
 

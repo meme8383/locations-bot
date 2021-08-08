@@ -35,7 +35,7 @@ class Users(commands.Cog):
         try:
             user_id = self.db.get_query("SELECT id FROM users WHERE discord_id = %s", [user.id])[0]
         except IndexError:
-            ctx.send(f"`{user}` could not be found.")
+            await ctx.send(f"`{user}` could not be found.")
             return
 
         for area in self.db.get_query("SELECT location_id FROM location_builders WHERE user_id = %s", [user_id]):
