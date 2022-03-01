@@ -21,7 +21,8 @@ COGS = [
     "cogs.leave",
     "cogs.search",
     "cogs.users",
-    "cogs.update"
+    "cogs.update",
+    "cogs.Events"
 ]
 
 
