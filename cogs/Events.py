@@ -47,7 +47,7 @@ class Kgnar_message:
     def swear(self): 
         if Kgnar_message.swear_filter(self.msg): return "STOP SWEARING KGNAR YOU DON'T HAVE HUMAN RIGHTS :rage:"
     def welcome(self):
-        if "welcome" in self.msg or " hi " in self.msg: return """Hello, I'm kgnar, my current goal in BTE is to completely build the entire SLT (South Lake Tahoe) area (and possibly further).
+        if "welcome" in self.msg or "hi" in self.msg: return """Hello, I'm kgnar, my current goal in BTE is to completely build the entire SLT (South Lake Tahoe) area (and possibly further).
 Having grown up in SLT, I've had a lot of time to familiarize the area's land/structures and specific details which make them unique. 
 While I no longer live in Tahoe, I'm able to visit often and hold a sense of nostalgia which provides motivation to continue the project. 
 On top of my area's knowledge, I have been an active player of Minecraft for nearly 8 years; giving me lots of experience on the game's building techniques. 
