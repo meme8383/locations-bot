@@ -79,8 +79,6 @@ class Events(commands.Cog):
         if message.author.id == Kgnar_message.id: # if we enter here, kgnar has sent a message   
             # creating obj 
             kgnar = Kgnar_message(message)
-            # first respond with :nauseated_face: 
-            await message.channel.send("the ultimate furry spoke :nauseated_face:")
             # now checking if our functions are met and responding accordingly 
             for function in kgnar.kgnar_functions_list: # accessing function list of the kgnar obj, could also be the kgnar class 
                 response = function(kgnar) # Running the function passing the kgnar obj cause self is not implicit in this case 
