@@ -12,7 +12,8 @@ class Kgnar_message:
             'idiot',
             'idot',
             'cunt',
-            'fucking'
+            'fucking', 
+            'kgnar'
         ]
         for swear in swears: 
             if swear in msg: return True 
@@ -35,24 +36,31 @@ class Kgnar_message:
         if "🤨" in self.msg: return ":face_with_raised_eyebrow:kgnar spoke:face_with_raised_eyebrow:, must get her manager <@360392861608574978>"
     def no(self):
         if "no" in self.msg and "furry" in self.msg: return "bad furry. :rolling_eyes:"
-        elif "no" in self.msg: return "bad kgnar. :thumbsdown: :thumbsdown: :thumbsdown: :thumbsdown: :thumbsdown: :thumbsdown: "
+        elif "no" in self.msg: return "reminder that you can't say no: bad kgnar. :thumbsdown: :thumbsdown: :thumbsdown: :thumbsdown: :thumbsdown: :thumbsdown: "
     def asked(self):
-        if "😡" in self.msg: return "nobody asked though :rofl: :rofl: :rofl:"
+        if "😡" in self.msg: return "nobody asked though kgnar :rofl: :rofl: :rofl:"
     def roll(self):
-        if "🙄" in self.msg: return "kgnar is misbehaving again, I apologize for this incident. please contact her manager"
+        if "🙄" in self.msg: return "kgnar is misbehaving again, I apologize for this incident. please contact her manager (Jesus)"
     def cry(self):
-        if "😭" in self.msg: return ":joy::joy::joy::joy::joy:"
+        if "😭" in self.msg: return ":joy::joy::joy::joy::joy: kgnar sobbing"
     def yawn(self):
         if "🥱" in self.msg: return "shut up"
     def swear(self): 
         if Kgnar_message.swear_filter(self.msg): return "STOP SWEARING KGNAR YOU DON'T HAVE HUMAN RIGHTS :rage:"
     def welcome(self):
-        if "welcome" in self.msg or "hi" in self.msg: return """Hello, I'm kgnar, my current goal in BTE is to completely build the entire SLT (South Lake Tahoe) area (and possibly further).
+        if "welcome" in self.msg or "hi" in self.msg: return """Hewo:pleading_face:, I'm :face_vomiting:kgnar:nauseated_face:, my current goal in BTE is to completely build the entire SLT (South Lake Tahoe) area (and possibly further).
 Having grown up in SLT, I've had a lot of time to familiarize the area's land/structures and specific details which make them unique. 
 While I no longer live in Tahoe, I'm able to visit often and hold a sense of nostalgia which provides motivation to continue the project. 
 On top of my area's knowledge, I have been an active player of Minecraft for nearly 8 years; giving me lots of experience on the game's building techniques. 
 Overall, I believe my experience could help to finish another area on the map and I would enjoy being a part of the community. 
-Thank you for taking the time to review my application.""" 
+Thank you for taking the time to review my application.
+👉👈""" 
+    def rofl(self): 
+        if '🤣' in self.msg: return "please shut up please shut up please shut up please shut up :rolling_eyes:"
+    def think(self): 
+        if '🤔' in self.msg: return "you would require a brain to think kgn*r :joy::ok_hand:" 
+    def angel(self): 
+        if ':innocent:' in self.msg: return "LITERALLY SHUT THE FUCK UP" 
     kgnar_functions_list = [ # Holds all the functions that we'll loop through, don't forget to add a function here after implementing it
         neutral_emoji_check, 
         grin_emoji_check, 
@@ -65,7 +73,10 @@ Thank you for taking the time to review my application."""
         cry,
         yawn,
         swear, 
-        welcome
+        welcome,
+        rofl, 
+        think, 
+        angel
     ]
 
 class Events(commands.Cog): 
